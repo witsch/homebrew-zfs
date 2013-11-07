@@ -24,6 +24,18 @@ class Maczfs < Formula
     system "./autogen.sh"
     system "./configure", "--prefix=#{prefix}", "--with-spl=#{spl_prefix}"
     system "make"
+    prefix.install 'module/zfs/zfs.kext'
+    lib.install Dir['lib/libnvpair/.libs/*.dylib']
+    lib.install Dir['lib/libuutil/.libs/*.dylib']
+    lib.install Dir['lib/libzfs/.libs/*.dylib']
+    lib.install Dir['lib/libzfs_core/.libs/*.dylib']
+    lib.install Dir['lib/libzpool/.libs/*.dylib']
+    sbin.install 'cmd/zpool/.libs/zpool'
+    sbin.install 'cmd/zfs/.libs/zfs'
+    sbin.install 'cmd/zdb/.libs/zdb'
+    man8.install 'man/man8/zpool.8'
+    man8.install 'man/man8/zfs.8'
+    man8.install 'man/man8/zdb.8'
   end
 
   def caveats
