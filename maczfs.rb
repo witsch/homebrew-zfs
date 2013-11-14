@@ -2,9 +2,8 @@ require 'formula'
 
 class Maczfs < Formula
   homepage 'http://maczfs.org/'
-  url 'https://github.com/zfs-osx/zfs.git', :revision => '2cab57bd'
-  version '99-2cab57bd'
-
+  url 'https://github.com/zfs-osx/zfs/archive/alpha-0.6.3.tar.gz'
+  sha1 '2df9e32fbc5fb3fd2875adae06967e5d84278305'
   head 'https://github.com/zfs-osx/zfs.git'
 
   depends_on :automake

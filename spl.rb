@@ -2,9 +2,8 @@ require 'formula'
 
 class Spl < Formula
   homepage 'http://maczfs.org/'
-  url 'https://github.com/zfs-osx/spl.git', :revision => '101d5778'
-  version '99-101d5778'
-
+  url 'https://github.com/zfs-osx/spl/archive/alpha-0.6.3.tar.gz'
+  sha1 'b9ff6d4d4b219fe443f44d629c4e379e82597d6b'
   head 'https://github.com/zfs-osx/spl.git'
 
   depends_on :autoconf
