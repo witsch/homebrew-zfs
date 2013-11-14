@@ -38,28 +38,62 @@ class Maczfs < Formula
     man8.install 'man/man8/zpool.8'
     man8.install 'man/man8/zfs.8'
     man8.install 'man/man8/zdb.8'
+
+    # create convenience script to reload kexts and link the binaries
+    (prefix + "setup.sh").write <<-EOS.undent
+      #!/bin/bash
+
+      # define locations
+      exts=/System/Library/Extensions
+      splx=#{spl_prefix}/spl.kext
+      zfsx=#{prefix}/zfs.kext
+
+      # unload kexts if they exist in /System/...
+      echo Unloading kexts...
+      test -e $exts/zfs.kext && kextunload $exts/zfs.kext
+      test -e $exts/spl.kext && kextunload $exts/spl.kext
+
+      # prepare extensions
+      chown -R root $splx $zfsx
+
+      function onexit() {
+          local status=${1:-$?}
+          kextload $splx
+          kextload $zfsx
+          exit $status
+      }
+
+      # try to load new extensions, and revert to the old ones should that fail...
+      echo Loading new kexts...
+      trap 'onexit' ERR
+      set -o errexit
+      kextload $splx
+      kextload $zfsx
+      trap - ERR
+
+      # the kexts can be loaded, so they should be copied into place...
+      echo Copying new kexts...
+      cp -rf $splx $zfsx $exts/
+
+      # lastly the zfs binaries are linked (from the homebrew cellar)
+      sudo -u $SUDO_USER brew unlink maczfs
+      sudo -u $SUDO_USER brew link --force maczfs
+    EOS
+
   end
 
   def caveats
     message = <<-EOS.undent
-      In order for ZFS-based filesystems to work, the zfs kernel extension
-      must be installed by the root user:
+      In order for ZFS-based filesystems to work, matching spl and zfs
+      kernel extensions must be loaded, and only then any binaries etc
+      should be linked from the cellar.  A setup script taking care of
+      the required steps is provided for convenience.  Please run:
 
-        sudo /bin/cp -rfX #{prefix}/spl.kext /Library/Extensions
+        sudo bash #{prefix}/setup.sh
 
-      If upgrading from a previous version of MacZFS, the old kernel extension
-      will need to be unloaded before performing the steps listed above. First,
-      check that no ZFS-based filesystems are running:
-
-        mount -t zfs
-
-      Unmount all ZFS filesystems and then unload the kernel extensions:
-
-        sudo kextunload -b net.lundman.zfs
-        sudo kextunload -b net.lundman.spl
-
+      Note that before running this script all ZFS-based filesystems
+      should be unmounted.
     EOS
-
     return message
   end
 
