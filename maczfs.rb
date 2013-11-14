@@ -13,6 +13,8 @@ class Maczfs < Formula
 
   env :std    # superenv add `-I...`, which breaks the build
 
+  keg_only "Linking should only be done once the matching kernel extension has been loaded."
+
   def install
     ENV['CC'] = 'clang'
     ENV['CXX'] = 'clang++'
