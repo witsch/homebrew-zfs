@@ -24,10 +24,9 @@ Installation
 
 ```sh
 $ brew install witsch/zfs/maczfs
-$ sudo bash
-# bash /usr/local/Cellar/…/setup.sh
-# touch /etc/mtab
-# zpool import [-a]
+$ sudo bash /usr/local/Cellar/…/setup.sh
+$ sudo touch /etc/mtab
+$ sudo zpool import [-a]
 ```
 
 Note that it might be helpful to actually read brew's output as well as
